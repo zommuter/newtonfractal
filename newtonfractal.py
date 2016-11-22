@@ -21,18 +21,20 @@ def newton(f, x0, fprime, maxiter=50):
     return x0, iter
 
 
-X = 4*2**6
+X = 4*2**7
 Y = 3*X//4
 
-x_min = -2
-x_max = 2
-y_min = -2
-y_max = 2
+x_min = -5
+x_max = -x_min
+y_min = x_min
+y_max = x_max
 
 maxiter = 100
 ndigits = 1
 
-f = lambda x: np.power(x,3) - 1; f1 = lambda x: 3*np.power(x,2)
+#f = lambda x: np.power(x,3) - 1; f1 = lambda x: 3*np.power(x,2)
+f = lambda x: np.power(x,5) + np.power(x,3)*7 - np.power(x,2)*3 -1
+f1 = lambda x: 5*np.power(x,4) + 21*np.power(x,2) - 6*x
 
 pic = np.zeros((Y, X), dtype=np.int)
 iters = np.zeros((Y, X))
@@ -52,7 +54,7 @@ for xi in range(X):
         except ValueError:
             zeros.append(z)
             i = len(zeros)
-        pic[yi,xi] = 0 if z is None else i if abs(x+1.j*y - z) > .1**ndigits else -i
+        pic[yi,xi] = 0 if z is None else -i if abs(x+1.j*y - z) > .1**ndigits else i
         iters[yi,xi] = iter
 
 plt.imshow(pic, interpolation='None', cmap='Set1')
