@@ -40,7 +40,7 @@ for xi in range(X):
         except ValueError:
             zeros.append(z)
             i = len(zeros)
-        pic[yi,xi] = i
+        pic[yi,xi] = i if abs(x+1.j*y - z) > .1**ndigits else -i
 
 plt.imshow(pic, interpolation='None', cmap='Set1')
 plt.show()
