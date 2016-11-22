@@ -12,13 +12,13 @@ from scipy.optimize import newton
 X = 4*2**6
 Y = 3*X//4
 
-x_min = -5
-x_max = 5
+x_min = -2
+x_max = 2
 y_min = -2
 y_max = 2
 
 maxiter = 100
-ndigits = 3
+ndigits = 1
 
 f = lambda x: np.power(x,3) - 1
 f1 = lambda x: 3*np.power(x,2)
