@@ -9,19 +9,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def newton(f, x0, fprime, dx, dy=None, maxiter=50):
+    x0 = np.asarray(x0)
+    iters = np.zeros(np.shape(x0), dtype=np.int)
     if dy is None:
         dy = dx
-    f0 = f(x0)
+    f0 = np.asarray(f(x0))
+    f1 = np.asarray(fprime(x0))
+    wip = abs(f0) >= 1e-3
     for iter in range(maxiter):
-        f1 = fprime(x0)
-        if f1==0:
-            x0 = x0 + (2*random()-1)*dx + 1.j*(2*random()-1)*dy
-            continue
-        x0 = x0 - f0 / f1
-        f0 = f(x0)
-        if abs(f0) < 1e-3:
-            return x0, iter
-    return x0, iter
+        #print(iter, f0, f1, done)
+        f1[wip] = fprime(x0[wip])
+        xf1 = f1!=0
+        x0[~xf1] += .5*dx + .5j*dy
+        #if f1==0:
+        #    x0 = x0 + (2*random()-1)*dx + 1.j*(2*random()-1)*dy
+        #    continue
+        x0[xf1] = x0[xf1] - f0[xf1] / f1[xf1]
+        f0[wip] = f(x0[wip])
+        wip = abs(f0) >= 1e-3
+        iters[wip] += 1
+        if (~wip).all():
+            break
+    return x0, iters
 
 
 X = 4*2**7
@@ -52,7 +61,7 @@ for xi in range(X):
         y = y_min + (y_max-y_min)/Y*yi
         z, iter = newton(f, x + 1.j*y, dx=dx, dy=dy, fprime=f1, maxiter=maxiter)
         if iter < maxiter:
-            z = round(z.real, ndigits) + 1j * round(z.imag, ndigits)
+            z = np.round(z.real, ndigits) + 1j * np.round(z.imag, ndigits)
         else:
             z = None
         try:
