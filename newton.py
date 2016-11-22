@@ -13,7 +13,7 @@ def newton(f, x0, fprime, maxiter=50):
     for iter in range(maxiter):
         f1 = fprime(x0)
         if f1==0:
-            break
+            return None, maxiter
         x0 = x0 - f0 / f1
         f0 = f(x0)
         if abs(f0) < 1e-3:
@@ -35,7 +35,7 @@ ndigits = 1
 f = lambda x: np.power(x,3) - 1; f1 = lambda x: 3*np.power(x,2)
 
 pic = np.zeros((Y, X), dtype=np.int)
-zeros = [None,]
+zeros = ['', None,]
 
 for xi in range(X):
     for yi in range(Y):
@@ -51,7 +51,7 @@ for xi in range(X):
         except ValueError:
             zeros.append(z)
             i = len(zeros)
-        pic[yi,xi] = i if abs(x+1.j*y - z) > .1**ndigits else -i
+        pic[yi,xi] = 0 if z is None else i if abs(x+1.j*y - z) > .1**ndigits else -i
 
 plt.imshow(pic, interpolation='None', cmap='Set1')
 plt.show()
