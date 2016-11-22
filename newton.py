@@ -7,7 +7,19 @@ from builtins import super
 from random import random
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.optimize import newton
+
+def newton(f, x0, fprime, maxiter=50):
+    f0 = f(x0)
+    for iter in range(maxiter):
+        f1 = fprime(x0)
+        if f1==0:
+            break
+        x0 = x0 - f0 / f1
+        f0 = f(x0)
+        if abs(f0) < 1e-3:
+            return x0, iter
+    return x0, iter
+
 
 X = 4*2**6
 Y = 3*X//4
@@ -20,8 +32,7 @@ y_max = 2
 maxiter = 100
 ndigits = 1
 
-f = lambda x: np.power(x,3) - 1
-f1 = lambda x: 3*np.power(x,2)
+f = lambda x: np.power(x,3) - 1; f1 = lambda x: 3*np.power(x,2)
 
 pic = np.zeros((Y, X), dtype=np.int)
 zeros = [None,]
@@ -30,10 +41,10 @@ for xi in range(X):
     for yi in range(Y):
         x = x_min + (x_max-x_min)/X*xi
         y = y_min + (y_max-y_min)/Y*yi
-        try:
-            z = newton(f, x + 1.j*y, fprime=f1, maxiter=maxiter)
+        z, iter = newton(f, x + 1.j*y, fprime=f1, maxiter=maxiter)
+        if iter < maxiter:
             z = round(z.real, ndigits) + 1j * round(z.imag, ndigits)
-        except RuntimeError:
+        else:
             z = None
         try:
             i = zeros.index(z)
