@@ -35,6 +35,7 @@ ndigits = 1
 f = lambda x: np.power(x,3) - 1; f1 = lambda x: 3*np.power(x,2)
 
 pic = np.zeros((Y, X), dtype=np.int)
+iters = np.zeros((Y, X))
 zeros = ['', None,]
 
 for xi in range(X):
@@ -52,6 +53,10 @@ for xi in range(X):
             zeros.append(z)
             i = len(zeros)
         pic[yi,xi] = 0 if z is None else i if abs(x+1.j*y - z) > .1**ndigits else -i
+        iters[yi,xi] = iter
 
 plt.imshow(pic, interpolation='None', cmap='Set1')
+plt.contour(np.log(iters))
+plt.figure()
+plt.imshow(np.log(iters), interpolation='None', cmap='gray')
 plt.show()
