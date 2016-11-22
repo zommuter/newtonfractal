@@ -33,7 +33,7 @@ def newton(f, x0, fprime, dx, dy=None, maxiter=50):
     return x0, iters
 
 
-X = 4*2**7
+X = 4*2**5
 Y = 3*X//4
 
 x_min = -5
@@ -47,15 +47,28 @@ dy = (y_max - y_min) / Y
 maxiter = 100
 ndigits = 1
 
-#f = lambda x: np.power(x,3) - 1; f1 = lambda x: 3*np.power(x,2)
-f = lambda x: np.power(x,5) + np.power(x,3)*7 - np.power(x,2)*3 -1
-f1 = lambda x: 5*np.power(x,4) + 21*np.power(x,2) - 6*x
+f = lambda x: np.power(x,3) - 1; f1 = lambda x: 3*np.power(x,2)
+#f = lambda x: np.power(x,5) + np.power(x,3)*7 - np.power(x,2)*3 -1
+#f1 = lambda x: 5*np.power(x,4) + 21*np.power(x,2) - 6*x
 
 pic = np.zeros((Y, X), dtype=np.int)
 iters = np.zeros((Y, X))
 zeros = ['', None,]
 
+xs = np.linspace(x_min, x_max, X)
+ys = np.linspace(y_min, y_max, Y).T
+ys, xs = np.meshgrid(xs, ys)
+
+zs, iters = newton(f, xs + 1.j*ys, dx=dx, dy=dy, fprime=f1, maxiter=maxiter)
+converged = iters<maxiter
+z[converged] = np.round(z[converged], ndigits)
+z[~converged] = None
+
+zeros = np.unique(z.flatten())
+
+
 for xi in range(X):
+    break
     for yi in range(Y):
         x = x_min + (x_max-x_min)/X*xi
         y = y_min + (y_max-y_min)/Y*yi
