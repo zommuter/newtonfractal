@@ -8,12 +8,15 @@ from random import random
 import numpy as np
 import matplotlib.pyplot as plt
 
-def newton(f, x0, fprime, maxiter=50):
+def newton(f, x0, fprime, dx, dy=None, maxiter=50):
+    if dy is None:
+        dy = dx
     f0 = f(x0)
     for iter in range(maxiter):
         f1 = fprime(x0)
         if f1==0:
-            return None, maxiter
+            x0 = x0 + (2*random()-1)*dx + 1.j*(2*random()-1)*dy
+            continue
         x0 = x0 - f0 / f1
         f0 = f(x0)
         if abs(f0) < 1e-3:
@@ -28,6 +31,9 @@ x_min = -5
 x_max = -x_min
 y_min = x_min
 y_max = x_max
+
+dx = (x_max - x_min) / X
+dy = (y_max - y_min) / Y
 
 maxiter = 100
 ndigits = 1
@@ -44,7 +50,7 @@ for xi in range(X):
     for yi in range(Y):
         x = x_min + (x_max-x_min)/X*xi
         y = y_min + (y_max-y_min)/Y*yi
-        z, iter = newton(f, x + 1.j*y, fprime=f1, maxiter=maxiter)
+        z, iter = newton(f, x + 1.j*y, dx=dx, dy=dy, fprime=f1, maxiter=maxiter)
         if iter < maxiter:
             z = round(z.real, ndigits) + 1j * round(z.imag, ndigits)
         else:
