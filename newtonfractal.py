@@ -20,12 +20,12 @@ def newton(f, x0, fprime, dx, dy=None, maxiter=50):
         #print(iter, f0, f1, done)
         f1[wip] = fprime(x0[wip])
         xf1 = f1!=0
-        x0[~xf1] += .5*dx + .5j*dy
+        x0[~xf1] += .5*dx + .5j*dy  # TODO: Randomize?
         #if f1==0:
         #    x0 = x0 + (2*random()-1)*dx + 1.j*(2*random()-1)*dy
         #    continue
         x0[xf1] = x0[xf1] - f0[xf1] / f1[xf1]
-        f0[wip] = f(x0[wip])
+        f0[wip] = f(x0[wip])  # TODO: Lookup if new x0's Pixel has already been checked
         wip = abs(f0) >= 1e-3
         iters[wip] += 1
         if (~wip).all():
@@ -59,13 +59,12 @@ ys = np.linspace(y_min, y_max, Y)
 xs, ys = np.meshgrid(xs, ys)
 
 zeros, iters = newton(f, xs + 1.j * ys, dx=dx, dy=dy, fprime=f1, maxiter=maxiter)
-converged = iters<maxiter
+converged = iters<maxiter  # TODO: Use np.where?
 zeros[converged] = np.round(zeros[converged], ndigits)
 zeros[~converged] = np.nan
 
+
 unique_zeros = np.unique(zeros.flatten())
-
-
 for i, zero in enumerate(unique_zeros):
     pic[zeros==zero] = i
     basin = np.where((zeros == zero) & (abs(xs+1.j*ys - zero) <= .1*ndigits))
