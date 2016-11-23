@@ -38,8 +38,8 @@ Y = 3*X//4
 
 x_min = -5
 x_max = -x_min
-y_min = x_min
-y_max = x_max
+y_min = x_min*Y/X
+y_max = x_max*Y/X
 
 dx = (x_max - x_min) / X
 dy = (y_max - y_min) / Y
