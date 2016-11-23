@@ -21,9 +21,6 @@ def newton(f, x0, fprime, dx, dy=None, maxiter=50):
         f1[wip] = fprime(x0[wip])
         xf1 = f1!=0
         x0[~xf1] += .5*dx + .5j*dy  # TODO: Randomize?
-        #if f1==0:
-        #    x0 = x0 + (2*random()-1)*dx + 1.j*(2*random()-1)*dy
-        #    continue
         x0[xf1] = x0[xf1] - f0[xf1] / f1[xf1]
         f0[wip] = f(x0[wip])  # TODO: Lookup if new x0's Pixel has already been checked
         wip = abs(f0) >= 1e-3
@@ -33,7 +30,7 @@ def newton(f, x0, fprime, dx, dy=None, maxiter=50):
     return x0, iters
 
 
-X = 4*2**5
+X = 4*2**8
 Y = 3*X//4
 
 x_min = -5
@@ -48,11 +45,13 @@ maxiter = 100
 ndigits = 1
 
 f = lambda x: np.power(x,3) - 1; f1 = lambda x: 3*np.power(x,2)
+#f = lambda x: np.power(x,2) - 1; f1 = lambda x: 2*np.power(x,1)
 #f = lambda x: np.power(x,5) + np.power(x,3)*7 - np.power(x,2)*3 -1
 #f1 = lambda x: 5*np.power(x,4) + 21*np.power(x,2) - 6*x
+#f = lambda x: np.tanh(x) - np.power(x,3)
+#f1 = lambda x: 1/np.cosh(x) - 3*np.power(x,2)
 
 pic = np.zeros((Y, X), dtype=np.int)  # TODO: WHY (Y,X) and not (X,Y)???
-#zeros = ['', None,]
 
 xs = np.linspace(x_min, x_max, X)
 ys = np.linspace(y_min, y_max, Y)
@@ -62,7 +61,6 @@ zeros, iters = newton(f, xs + 1.j * ys, dx=dx, dy=dy, fprime=f1, maxiter=maxiter
 converged = iters<maxiter  # TODO: Use np.where?
 zeros[converged] = np.round(zeros[converged], ndigits)
 zeros[~converged] = np.nan
-
 
 unique_zeros = np.unique(zeros.flatten())
 for i, zero in enumerate(unique_zeros):
