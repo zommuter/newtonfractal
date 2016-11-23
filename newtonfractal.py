@@ -52,38 +52,24 @@ f = lambda x: np.power(x,3) - 1; f1 = lambda x: 3*np.power(x,2)
 #f1 = lambda x: 5*np.power(x,4) + 21*np.power(x,2) - 6*x
 
 pic = np.zeros((Y, X), dtype=np.int)
-iters = np.zeros((Y, X))
 zeros = ['', None,]
 
 xs = np.linspace(x_min, x_max, X)
 ys = np.linspace(y_min, y_max, Y).T
 ys, xs = np.meshgrid(xs, ys)
 
-zs, iters = newton(f, xs + 1.j*ys, dx=dx, dy=dy, fprime=f1, maxiter=maxiter)
+zeros, iters = newton(f, xs + 1.j * ys, dx=dx, dy=dy, fprime=f1, maxiter=maxiter)
 converged = iters<maxiter
-z[converged] = np.round(z[converged], ndigits)
-z[~converged] = None
+zeros[converged] = np.round(zeros[converged], ndigits)
+zeros[~converged] = np.nan
 
-zeros = np.unique(z.flatten())
+unique_zeros = np.unique(zeros.flatten())
 
 
-for xi in range(X):
-    break
-    for yi in range(Y):
-        x = x_min + (x_max-x_min)/X*xi
-        y = y_min + (y_max-y_min)/Y*yi
-        z, iter = newton(f, x + 1.j*y, dx=dx, dy=dy, fprime=f1, maxiter=maxiter)
-        if iter < maxiter:
-            z = np.round(z.real, ndigits) + 1j * np.round(z.imag, ndigits)
-        else:
-            z = None
-        try:
-            i = zeros.index(z)
-        except ValueError:
-            zeros.append(z)
-            i = len(zeros)
-        pic[yi,xi] = 0 if z is None else -i if abs(x+1.j*y - z) > .1**ndigits else i
-        iters[yi,xi] = iter
+for i, zero in enumerate(unique_zeros):
+    pic[zeros==zero] = i
+    basin = np.where((zeros == zero) & (abs(xs+1.j*ys - zero) <= .1*ndigits))
+    pic[basin] = -i-1
 
 plt.imshow(pic, interpolation='None', cmap='Set1')
 plt.contour(np.log(iters))
