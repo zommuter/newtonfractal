@@ -51,12 +51,12 @@ f = lambda x: np.power(x,3) - 1; f1 = lambda x: 3*np.power(x,2)
 #f = lambda x: np.power(x,5) + np.power(x,3)*7 - np.power(x,2)*3 -1
 #f1 = lambda x: 5*np.power(x,4) + 21*np.power(x,2) - 6*x
 
-pic = np.zeros((Y, X), dtype=np.int)
-zeros = ['', None,]
+pic = np.zeros((Y, X), dtype=np.int)  # TODO: WHY (Y,X) and not (X,Y)???
+#zeros = ['', None,]
 
 xs = np.linspace(x_min, x_max, X)
-ys = np.linspace(y_min, y_max, Y).T
-ys, xs = np.meshgrid(xs, ys)
+ys = np.linspace(y_min, y_max, Y)
+xs, ys = np.meshgrid(xs, ys)
 
 zeros, iters = newton(f, xs + 1.j * ys, dx=dx, dy=dy, fprime=f1, maxiter=maxiter)
 converged = iters<maxiter
@@ -71,8 +71,9 @@ for i, zero in enumerate(unique_zeros):
     basin = np.where((zeros == zero) & (abs(xs+1.j*ys - zero) <= .1*ndigits))
     pic[basin] = -i-1
 
-plt.imshow(pic, interpolation='None', cmap='Set1')
-plt.contour(np.log(iters))
+plt.imshow(pic, interpolation='None', cmap='Set1', origin='lower', extent=[x_min, x_max, y_min, y_max])
+#plt.colorbar()
+plt.contour(xs, ys, np.log(iters))
 plt.figure()
-plt.imshow(np.log(iters), interpolation='None', cmap='gray')
+plt.imshow(np.log(iters), interpolation='None', cmap='gray', origin='lower', extent=[x_min, x_max, y_min, y_max])
 plt.show()
